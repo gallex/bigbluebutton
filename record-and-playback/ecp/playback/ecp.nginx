@@ -1,0 +1,10 @@
+        location /playback/ecpslides {
+                root    /var/bigbluebutton;
+                index  index.html index.htm;
+        }
+
+        location /ecpslides {
+                root    /var/bigbluebutton/published;
+                index  index.html index.htm;
+        }
+
