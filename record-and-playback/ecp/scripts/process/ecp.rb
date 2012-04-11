@@ -19,7 +19,7 @@ props = YAML::load(File.open('../../core/scripts/bigbluebutton.yml'))
 recording_dir = props['recording_dir']
 target_dir = "#{recording_dir}/process/ecp/#{meeting_id}"
 
-#if not FileTest.directory?(target_dir)
+if not FileTest.directory?(target_dir)
   raw_archive_dir = "#{recording_dir}/raw/#{meeting_id}"
   FileUtils.mkdir_p target_dir
 
@@ -66,8 +66,6 @@ target_dir = "#{recording_dir}/process/ecp/#{meeting_id}"
   process_done = File.new("#{recording_dir}/status/processed/#{meeting_id}-ecp.done", "w")
   process_done.write("Processed #{meeting_id}")
   process_done.close
-#else
-#  BigBlueButton.logger.debug("Skipping #{meeting_id} as it has already been processed.")
-#end
-                                                                
-                                                              
+else
+  BigBlueButton.logger.debug("Skipping #{meeting_id} as it has already been processed.")
+end
