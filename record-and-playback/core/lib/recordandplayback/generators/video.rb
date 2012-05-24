@@ -559,5 +559,13 @@ module BigBlueButton
     command = "ffmpeg -i #{target_dir}/audio.ogg -i #{concat_vid} -y -loglevel fatal -v -10 -map 1:0 -map 0:0 -ar 22050 -vcodec libx264 #{target_dir}/webcam.mp4"
     # command = "ffmpeg -i #{target_dir}/audio.ogg -i #{concat_vid} -y -loglevel fatal -v -10 -map 1:0 -map 0:0 -sameq -ar 22050 #{target_dir}/muxed-audio-webcam.flv"
     BigBlueButton.execute(command)
+
+    BigBlueButton.logger.info("change MOOV atom to header")      
+    command = "mv #{target_dir}/webcam.mp4 #{target_dir}/w.mp4"
+    BigBlueButton.execute(command)
+
+    command = "qt-faststart #{target_dir}/w.mp4 #{target_dir}/webcam.mp4"
+    BigBlueButton.execute(command)
+    # command = "ffmpeg -i #{target_dir}/audio.ogg -i #{concat_vid} -y -loglevel fatal -v -10 -map 1:0 -map 0:0 -sameq -ar 22050 #{target_dir}/muxed-audio-webcam.flv"
   end
 end
