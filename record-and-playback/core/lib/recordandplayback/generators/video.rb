@@ -93,10 +93,33 @@ module BigBlueButton
 
 	#Concatenate mpg files
 	BigBlueButton.concatenate_mpg_files(mpgs,"#{target_dir}/webcam.mpg")
-    
+	
 	#Convert mpg to flv
 	BigBlueButton.convert_mpg_to_flv("#{target_dir}/webcam.mpg", video_out)
 
+	FileUtils.rm_f mpgs
+	FileUtils.rm_f "#{target_dir}/webcam.mpg"
+  end
+
+  # Concatenates several videos into one video, format is MPG
+  #   videos_in - an array of videos that need to be concatenated. The videos
+  #               will be concatenated based on their order in the array.
+  #   video_out - the concatenated video, format is MPG
+  #                
+  def self.concatenate_videos_mpg(videos_in, video_out)
+       BigBlueButton.logger.info("Task: Concatenating videos")
+       #Create .mpg files
+        mpgs = []
+        videos_in.each do |flv|
+                mpg =  "#{flv}.mpg"
+                BigBlueButton.convert_flv_to_mpg(flv,mpg)
+                mpgs << mpg
+        end
+
+        #Concatenate mpg files
+        BigBlueButton.concatenate_mpg_files(mpgs, video_out)
+
+        FileUtils.rm_f mpgs
   end
 
   #Converts flv to mpg
@@ -552,20 +575,23 @@ module BigBlueButton
       end
     end
                
-    concat_vid = "#{target_dir}/webcam.flv"
-    BigBlueButton.concatenate_videos(webcams, concat_vid)        
-    #BigBlueButton.multiplex_audio_and_video("#{target_dir}/audio.ogg", concat_vid, "#{target_dir}/muxed-audio-webcam.flv")   
+    concat_vid = "#{target_dir}/webcam.mpg"
+    BigBlueButton.concatenate_videos_mpg(webcams, concat_vid)        
+
     BigBlueButton.logger.info("Task: Multiplexing audio and video")      
     command = "ffmpeg -i #{target_dir}/audio.ogg -i #{concat_vid} -y -loglevel fatal -v -10 -map 1:0 -map 0:0 -ar 22050 -vcodec libx264 #{target_dir}/webcam.mp4"
     # command = "ffmpeg -i #{target_dir}/audio.ogg -i #{concat_vid} -y -loglevel fatal -v -10 -map 1:0 -map 0:0 -sameq -ar 22050 #{target_dir}/muxed-audio-webcam.flv"
     BigBlueButton.execute(command)
+   
+    # remove temp concated file 
+    FileUtils.rm_f concat_vid
 
     BigBlueButton.logger.info("change MOOV atom to header")      
-    command = "mv #{target_dir}/webcam.mp4 #{target_dir}/w.mp4"
-    BigBlueButton.execute(command)
-
-    command = "qt-faststart #{target_dir}/w.mp4 #{target_dir}/webcam.mp4"
+    command = "qt-faststart #{target_dir}/webcam.mp4 #{target_dir}/w.mp4"
     BigBlueButton.execute(command)
     # command = "ffmpeg -i #{target_dir}/audio.ogg -i #{concat_vid} -y -loglevel fatal -v -10 -map 1:0 -map 0:0 -sameq -ar 22050 #{target_dir}/muxed-audio-webcam.flv"
+
+    FileUtils.rm_f "#{target_dir}/webcam.mp4"
+    FileUtils.mv "#{target_dir}/w.mp4", "#{target_dir}/webcam.mp4"
   end
 end

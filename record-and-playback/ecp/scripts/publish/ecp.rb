@@ -41,8 +41,8 @@ if (playback == "ecp")
 		video_dir = "#{package_dir}/video"
 		FileUtils.mkdir_p video_dir
 		
-		FileUtils.cp("#{process_dir}/audio.ogg", audio_dir)
-		FileUtils.cp("#{process_dir}/temp/#{meeting_id}/audio/recording.wav", audio_dir)
+		#FileUtils.cp("#{process_dir}/audio.ogg", audio_dir)
+		#FileUtils.cp("#{process_dir}/temp/#{meeting_id}/audio/recording.wav", audio_dir)
 
 		FileUtils.cp("#{process_dir}/webcam.mp4", video_dir)
 
@@ -135,5 +135,8 @@ if (playback == "ecp")
 			FileUtils.mkdir_p publish_dir
 		end
 		FileUtils.cp_r(package_dir, publish_dir)
+
+		# remove temp file
+		FileUtils.rm_rf package_dir
 	end
 end

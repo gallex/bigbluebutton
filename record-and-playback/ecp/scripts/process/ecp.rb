@@ -62,6 +62,8 @@ if not FileTest.directory?(target_dir)
     end
   
   end
+
+  FileUtils.rm_rf temp_dir
           
   process_done = File.new("#{recording_dir}/status/processed/#{meeting_id}-ecp.done", "w")
   process_done.write("Processed #{meeting_id}")
@@ -69,3 +71,5 @@ if not FileTest.directory?(target_dir)
 else
   BigBlueButton.logger.debug("Skipping #{meeting_id} as it has already been processed.")
 end
+                                                                
+                                                              
