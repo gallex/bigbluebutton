@@ -4,13 +4,13 @@
 		include flowplayer JavaScript file that does  
 		Flash embedding and provides the Flowplayer API.
 	-->
-	<script type="text/javascript" src="flowplayer/flowplayer-3.2.8.min.js"></script>
+	<script type="text/javascript" src="flowplayer/flowplayer-3.2.10.min.js"></script>
 	
 	<!-- some minimal styling, can be removed -->
 	<link rel="stylesheet" type="text/css" href="css/playback.css">
 	
 	<!-- page title -->
-	<title>Minimal Flowplayer setup</title>
+	<title>ECP媒体播放</title>
 
 </head><body>
 <div id='warp'>
@@ -44,6 +44,7 @@
 			});
 			return map; 
 		})();
+	var START_TIME = params['start'];
 	var MEETING_ID = params['meetingID'];
 	var SLIDES_XML='/ecpslides/'+MEETING_ID+'/slides.xml';
 	var VIDEO='/ecpslides/'+MEETING_ID+'/video/webcam.mp4';
@@ -140,7 +141,7 @@
 		document.getElementById("slide").src=src;
 	}
 
-	flowplayer("video", "flowplayer/flowplayer-3.2.8.swf", {
+	flowplayer("video", "flowplayer/flowplayer-3.2.11.swf", {
 	//flowplayer("video", {src:"flowplayer/flowplayer-3.2.8.swf",width:320, height:260}, {
 		 plugins:  {
 			// controlbar settings
@@ -152,14 +153,25 @@
 		        	mute: true,
 				fullscreen:true,
 				height:20
+			},
+			pseudo: {
+			        url: "flowplayer.pseudostreaming-3.2.9.swf"
+				//,rangeRequests: true
 			}
+			
 	        },
 
 		clip: {
 		        url: VIDEO,
+		        //url: '/ecpslides/test.mp4', 
+			provider:'pseudo',
 		        onCuepoint: [CuePoints, function(clip, point) {
 				seekSlide(point);
 		        }],
+
+			onStart: function(clip) {
+				flowplayer().seek(START_TIME);
+			},
 
 			onSeek: function(clip, time) {
 				seekSlide(time*1000);
